@@ -167,5 +167,13 @@ export const Option = {
   fromUndefined: <A>(nullable: A | undefined): Option<A> =>
     nullable === undefined ? None<A>() : Some<A>(nullable),
 
-  // TODO: Implements the rest
+  // TODO: Implement last static methods
+
+  equals: <A>(a: Option<A>, b: Option<A>, equals: (a: A, b: A) => boolean) =>
+    a.isSome() && b.isSome() ? equals(a.value, b.value) : a.tag === b.tag,
+
+  pattern: {
+    Some: <A>(value: A) => ({ tag: "Some", value } as const),
+    None: { tag: "None" } as const,
+  },
 };
