@@ -44,7 +44,7 @@ const getOptionCommon = <A>(): OptionCommon<A> => ({
   },
 });
 
-type Some<A> = OptionCommon<A> & {
+interface Some<A> extends OptionCommon<A> {
   tag: "Some";
   value: A;
 
@@ -52,11 +52,11 @@ type Some<A> = OptionCommon<A> & {
    * Returns the value. Use within `if (option.isSome()) { ... }`
    */
   get(this: Some<A>): A;
-};
+}
 
-type None<A> = OptionCommon<A> & {
+interface None<A> extends OptionCommon<A> {
   tag: "None";
-};
+}
 
 export type Option<A> = Some<A> | None<A>;
 
