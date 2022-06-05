@@ -85,20 +85,18 @@ const someProto: SomeProto<unknown> = {
 
 const noneProto: NoneProto<unknown> = optionProto;
 
-const NONE = (() => {
-  const none = Object.create(noneProto) as None<unknown>;
-  none.tag = "None";
-  return none;
-})();
-
-const Some = <A>(value: A): Some<A> => {
+const Some = <A>(value: A): Option<A> => {
   const some = Object.create(someProto) as Some<A>;
   some.tag = "Some";
   some.value = value;
   return some;
 };
 
-const None = <A>() => NONE as Option<A>;
+const None = <A>() => {
+  const none = Object.create(noneProto) as None<A>;
+  none.tag = "None";
+  return none;
+};
 
 export const Option = {
   /**
