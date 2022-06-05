@@ -1,4 +1,4 @@
-interface OptionCommon<A> {
+interface OptionProto<A> {
   /**
    * Returns the Option containing the value from the callback
    *
@@ -31,73 +31,85 @@ interface OptionCommon<A> {
   isNone(this: Option<A>): this is None<A>;
 }
 
-const getOptionCommon = <A>(): OptionCommon<A> => ({
-  map<B>(this: Option<A>, f: (value: A) => B): Option<B> {
-    return this.tag === "Some"
-      ? Some(f(this.value))
-      : (this as unknown as Option<B>);
-  },
-
-  flatMap<B>(this: Option<A>, f: (value: A) => Option<B>): Option<B> {
-    return this.tag === "Some" ? f(this.value) : (this as unknown as Option<B>);
-  },
-
-  getWithDefault(defaultValue: A): A {
-    return this.tag === "Some" ? this.value : defaultValue;
-  },
-
-  isSome(this: Option<A>) {
-    return this.tag === "Some";
-  },
-
-  isNone(this: Option<A>) {
-    return this.tag === "None";
-  },
-});
-
-interface Some<A> extends OptionCommon<A> {
-  tag: "Some";
-  value: A;
-
+interface SomeProto<A> extends OptionProto<A> {
   /**
    * Returns the value. Use within `if (option.isSome()) { ... }`
    */
   get(this: Some<A>): A;
 }
 
-interface None<A> extends OptionCommon<A> {
+interface NoneProto<A> extends OptionProto<A> {}
+
+interface Some<A> extends SomeProto<A> {
+  tag: "Some";
+  value: A;
+}
+
+interface None<A> extends OptionProto<A> {
   tag: "None";
 }
 
 export type Option<A> = Some<A> | None<A>;
 
-const Some = <A>(value: A): Some<A> => ({
-  ...getOptionCommon<A>(),
+const optionProto: OptionProto<unknown> = {
+  map(f) {
+    return this.tag === "Some"
+      ? Some(f(this.value))
+      : (this as Option<ReturnType<typeof f>>);
+  },
 
-  tag: "Some",
-  value,
+  flatMap(f) {
+    return this.tag === "Some" ? f(this.value) : (this as ReturnType<typeof f>);
+  },
 
-  get(this: Some<A>): A {
+  getWithDefault(defaultValue) {
+    return this.tag === "Some" ? this.value : defaultValue;
+  },
+
+  isSome() {
+    return this.tag === "Some";
+  },
+
+  isNone() {
+    return this.tag === "None";
+  },
+};
+
+const someProto: SomeProto<unknown> = {
+  ...optionProto,
+
+  get(this: Some<unknown>): unknown {
     return this.value;
   },
-});
+};
 
-const None = <A>(): None<A> => ({
-  ...getOptionCommon<A>(),
+const noneProto: NoneProto<unknown> = optionProto;
 
-  tag: "None",
-});
+const NONE = (() => {
+  const none = Object.create(noneProto) as None<unknown>;
+  none.tag = "None";
+  return none;
+})();
+
+const Some = <A>(value: A): Some<A> => {
+  const some = Object.create(someProto) as Some<A>;
+  some.tag = "Some";
+  some.value = value;
+  return some;
+};
+
+const None = <A>() => NONE as Option<A>;
 
 export const Option = {
   /**
    * Create an Option.Some value
    */
-  Some: <A>(value: A): Option<A> => Some(value),
+  Some,
 
   /**
    * Create an Option.None value
    */
-  None: <A>(): Option<A> => None(),
+  None,
 
   /**
    * Create an Option from a nullable value
