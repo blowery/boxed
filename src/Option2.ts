@@ -161,25 +161,35 @@ export const Option = {
   /**
    * Create an Option from a nullable value
    */
-  fromNullable: <A>(nullable: A | null | undefined): Option<A> =>
-    nullable == null ? None<A>() : Some<A>(nullable),
+  fromNullable<A>(nullable: A | null | undefined): Option<A> {
+    return nullable == null ? None<A>() : Some<A>(nullable);
+  },
 
   /**
    * Create an Option from a value | null
    */
-  fromNull: <A>(nullable: A | null): Option<A> =>
-    nullable === null ? None<A>() : Some<A>(nullable),
+  fromNull<A>(nullable: A | null): Option<A> {
+    return nullable === null ? None<A>() : Some<A>(nullable);
+  },
 
   /**
    * Create an Option from a undefined | value
    */
-  fromUndefined: <A>(nullable: A | undefined): Option<A> =>
-    nullable === undefined ? None<A>() : Some<A>(nullable),
+  fromUndefined<A>(nullable: A | undefined): Option<A> {
+    return nullable === undefined ? None<A>() : Some<A>(nullable);
+  },
 
   // TODO: Implement last static methods
 
-  equals: <A>(a: Option<A>, b: Option<A>, equals: (a: A, b: A) => boolean) =>
-    a.isSome() && b.isSome() ? equals(a.value, b.value) : a.tag === b.tag,
+  equals<A>(
+    a: Option<A>,
+    b: Option<A>,
+    equals: (a: A, b: A) => boolean,
+  ): boolean {
+    return a.isSome() && b.isSome()
+      ? equals(a.value, b.value)
+      : a.tag === b.tag;
+  },
 
   pattern: {
     Some: <A>(value: A) => ({ tag: "Some", value } as const),
