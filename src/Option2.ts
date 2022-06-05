@@ -63,12 +63,14 @@ interface SomePrototype<A> extends OptionPrototype<A> {
   get(this: Some<A>): A;
 }
 
+interface NonePrototype<A> extends OptionPrototype<A> {}
+
 interface Some<A> extends SomePrototype<A> {
   tag: "Some";
   value: A;
 }
 
-interface None<A> extends OptionPrototype<A> {
+interface None<A> extends NonePrototype<A> {
   tag: "None";
 }
 
@@ -128,6 +130,10 @@ const somePrototype: SomePrototype<unknown> = {
   },
 };
 
+const nonePrototype: NonePrototype<unknown> = {
+  ...optionPrototype,
+};
+
 const Some = <A>(value: A): Option<A> => {
   const some = Object.create(somePrototype) as Some<A>;
   some.tag = "Some";
@@ -136,7 +142,7 @@ const Some = <A>(value: A): Option<A> => {
 };
 
 const None = <A>(): Option<A> => {
-  const none = Object.create(optionPrototype) as None<A>;
+  const none = Object.create(nonePrototype) as None<A>;
   none.tag = "None";
   return none;
 };
@@ -159,7 +165,7 @@ export const Option = {
     nullable == null ? None<A>() : Some<A>(nullable),
 
   /**
-   * Create an Option from a null | value
+   * Create an Option from a value | null
    */
   fromNull: <A>(nullable: A | null): Option<A> =>
     nullable === null ? None<A>() : Some<A>(nullable),
