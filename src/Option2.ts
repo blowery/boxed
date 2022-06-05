@@ -7,6 +7,13 @@ interface OptionCommon<A> {
   map<B>(this: Option<A>, f: (value: A) => B): Option<B>;
 
   /**
+   * Returns the Option containing the value from the callback
+   *
+   * (Option\<A>, A => Option\<B>) => Option\<B>
+   */
+  flatMap<B>(this: Option<A>, f: (value: A) => Option<B>): Option<B>;
+
+  /**
    * Return the value if present, and the fallback otherwise
    *
    * (Option\<A>, A) => A
@@ -29,6 +36,10 @@ const getOptionCommon = <A>(): OptionCommon<A> => ({
     return this.tag === "Some"
       ? Some(f(this.value))
       : (this as unknown as Option<B>);
+  },
+
+  flatMap<B>(this: Option<A>, f: (value: A) => Option<B>): Option<B> {
+    return this.tag === "Some" ? f(this.value) : (this as unknown as Option<B>);
   },
 
   getWithDefault(defaultValue: A): A {
