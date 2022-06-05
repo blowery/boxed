@@ -63,8 +63,6 @@ interface SomeProto<A> extends OptionProto<A> {
   get(this: Some<A>): A;
 }
 
-interface NoneProto<A> extends OptionProto<A> {}
-
 interface Some<A> extends SomeProto<A> {
   tag: "Some";
   value: A;
@@ -127,10 +125,6 @@ const someProto: SomeProto<unknown> = {
   },
 };
 
-const noneProto: NoneProto<unknown> = {
-  ...optionProto,
-};
-
 const Some = <A>(value: A): Option<A> => {
   const some = Object.create(someProto) as Some<A>;
   some.tag = "Some";
@@ -139,7 +133,7 @@ const Some = <A>(value: A): Option<A> => {
 };
 
 const None = <A>(): Option<A> => {
-  const none = Object.create(noneProto) as None<A>;
+  const none = Object.create(optionProto) as None<A>;
   none.tag = "None";
   return none;
 };
