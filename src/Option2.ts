@@ -115,6 +115,9 @@ const optionProto: OptionProto<unknown> = {
   isNone() {
     return this.tag === "None";
   },
+
+  // @ts-expect-error
+  __boxed_type__: "Option",
 };
 
 const someProto: SomeProto<unknown> = {
