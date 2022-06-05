@@ -7,6 +7,13 @@ interface OptionCommon<A> {
   map<B>(this: Option<A>, f: (value: A) => B): Option<B>;
 
   /**
+   * Return the value if present, and the fallback otherwise
+   *
+   * (Option\<A>, A) => A
+   */
+  getWithDefault(this: Option<A>, defaultValue: A): A;
+
+  /**
    * Typeguard
    */
   isSome(this: Option<A>): this is Some<A>;
@@ -22,6 +29,10 @@ const getOptionCommon = <A>(): OptionCommon<A> => ({
     return this.tag === "Some"
       ? Some(f(this.value))
       : (this as unknown as Option<B>);
+  },
+
+  getWithDefault(defaultValue: A): A {
+    return this.tag === "Some" ? this.value : defaultValue;
   },
 
   isSome(this: Option<A>) {
