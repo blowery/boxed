@@ -92,7 +92,7 @@ const Some = <A>(value: A): Option<A> => {
   return some;
 };
 
-const None = <A>() => {
+const None = <A>(): Option<A> => {
   const none = Object.create(noneProto) as None<A>;
   none.tag = "None";
   return none;
