@@ -1,4 +1,4 @@
-interface OptionPrototype<A> {
+interface OptionProto<A> {
   /**
    * Returns the Option containing the value from the callback
    *
@@ -56,27 +56,27 @@ interface OptionPrototype<A> {
   isNone(this: Option<A>): this is None<A>;
 }
 
-interface SomePrototype<A> extends OptionPrototype<A> {
+interface SomeProto<A> extends OptionProto<A> {
   /**
    * Returns the value. Use within `if (option.isSome()) { ... }`
    */
   get(this: Some<A>): A;
 }
 
-interface NonePrototype<A> extends OptionPrototype<A> {}
+interface NoneProto<A> extends OptionProto<A> {}
 
-interface Some<A> extends SomePrototype<A> {
+interface Some<A> extends SomeProto<A> {
   tag: "Some";
   value: A;
 }
 
-interface None<A> extends NonePrototype<A> {
+interface None<A> extends NoneProto<A> {
   tag: "None";
 }
 
 export type Option<A> = Some<A> | None<A>;
 
-const optionPrototype: OptionPrototype<unknown> = {
+const optionProto: OptionProto<unknown> = {
   map(func) {
     return this.tag === "Some"
       ? Some(func(this.value))
@@ -122,27 +122,27 @@ const optionPrototype: OptionPrototype<unknown> = {
   __boxed_type__: "Option",
 };
 
-const somePrototype: SomePrototype<unknown> = {
-  ...optionPrototype,
+const someProto: SomeProto<unknown> = {
+  ...optionProto,
 
   get(this: Some<unknown>): unknown {
     return this.value;
   },
 };
 
-const nonePrototype: NonePrototype<unknown> = {
-  ...optionPrototype,
+const noneProto: NoneProto<unknown> = {
+  ...optionProto,
 };
 
 const Some = <A>(value: A): Option<A> => {
-  const some = Object.create(somePrototype) as Some<A>;
+  const some = Object.create(someProto) as Some<A>;
   some.tag = "Some";
   some.value = value;
   return some;
 };
 
 const None = <A>(): Option<A> => {
-  const none = Object.create(nonePrototype) as None<A>;
+  const none = Object.create(noneProto) as None<A>;
   none.tag = "None";
   return none;
 };
